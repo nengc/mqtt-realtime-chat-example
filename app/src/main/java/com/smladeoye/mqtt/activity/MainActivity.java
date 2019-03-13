@@ -47,10 +47,10 @@ public class MainActivity extends BaseActivity implements MainView {
         setContentView(R.layout.activity_main);
 
         presenter = new MainPresenter(this);
-        messageTopicEdittext = (EditText) findViewById(R.id.message_topic_edittext);
-        messageEdittext = (EditText) findViewById(R.id.message_edittext);
-        sendMessageButton = (Button) findViewById(R.id.send_message_button);
-        topicMessageListRecyclerView = (RecyclerView) findViewById(R.id.message_list_view);
+        messageTopicEdittext = findViewById(R.id.message_topic_edittext);
+        messageEdittext = findViewById(R.id.message_edittext);
+        sendMessageButton = findViewById(R.id.send_message_button);
+        topicMessageListRecyclerView = findViewById(R.id.message_list_view);
 
         sendMessageButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -119,8 +119,11 @@ public class MainActivity extends BaseActivity implements MainView {
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        EditText topicEdittext = (EditText) dialog.getCustomView().findViewById(R.id.subscription_topic_edittext);
-                        presenter.handleSubscribeToTopicAction(topicEdittext.getText().toString());
+                        EditText topicEdittext;
+                        if (dialog.getCustomView() != null) {
+                            topicEdittext = dialog.getCustomView().findViewById(R.id.subscription_topic_edittext);
+                            presenter.handleSubscribeToTopicAction(topicEdittext.getText().toString());
+                        }
                     }
                 }).build();
         dialog.show();
@@ -177,7 +180,7 @@ public class MainActivity extends BaseActivity implements MainView {
 
     @Override
     public void onSuccessUnsubscribe() {
-        this.onSuccess("Topic successfully removed from subscriptions");
+        this.onSuccess(getString(R.string.unsubscribe_success_message));
     }
 
     @Override

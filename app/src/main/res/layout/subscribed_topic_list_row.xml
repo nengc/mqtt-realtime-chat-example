@@ -3,7 +3,7 @@
     android:id="@+id/subscribed_topic_view"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/gray_border"
+    android:background="@color/gray_btn_bg_color"
     android:weightSum="1"
     android:layout_marginTop="5dp"
     android:baselineAligned="false">
@@ -16,14 +16,14 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
         android:padding="5dp"
-        android:text="dfdfd"
         android:textStyle="bold" />
 
     <ImageView
         android:id="@+id/subscribed_topic_delete_action"
         android:src="@drawable/ic_delete_forever_black"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/content_description_delete_icon" />
 
 
 

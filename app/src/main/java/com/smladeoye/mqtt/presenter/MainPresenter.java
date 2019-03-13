@@ -1,12 +1,12 @@
 package com.smladeoye.mqtt.presenter;
 
+import android.app.Activity;
 import android.content.Context;
-import android.util.Log;
 
+import com.smladeoye.mqtt.R;
 import com.smladeoye.mqtt.model.MqttMessageType;
 import com.smladeoye.mqtt.model.MqttTopic;
 import com.smladeoye.mqtt.model.MqttTopicMessage;
-import com.smladeoye.mqtt.view.BaseView;
 import com.smladeoye.mqtt.view.MainView;
 
 import org.eclipse.paho.android.service.MqttAndroidClient;
@@ -65,7 +65,7 @@ public class MainPresenter extends BasePresenter<MainView> {
     }
 
     private void connect(IMqttActionListener listener) {
-        view.showProgress();
+        view.showProgress(((Activity)view).getString(R.string.alert_connection_loader_title));
         client = new MqttAndroidClient((Context) view, "tcp://broker.hivemq.com:1883", clientId);
         try {
             IMqttToken token = client.connect();
@@ -84,7 +84,7 @@ public class MainPresenter extends BasePresenter<MainView> {
             }
 
             @Override
-            public void messageArrived(String topic, MqttMessage message) throws Exception {
+            public void messageArrived(String topic, MqttMessage message) {
                 mqttTopicMessageList.add(new MqttTopicMessage(topic, message, MqttMessageType.RECEIVED));
                 view.updateTopicMessages(mqttTopicMessageList);
             }
@@ -97,14 +97,28 @@ public class MainPresenter extends BasePresenter<MainView> {
     }
 
     public void handleSubscribeAction() {
-        Log.e("topic","Total topic subscription: "+mqttTopicList.size());
         view.showSubscribeDialog(mqttTopicList);
     }
 
     private boolean validateSubscriptionTopic(String topic) {
+        boolean topicExists = false;
         if (topic == null || topic.trim().isEmpty()) {
             view.hideProgress();
             view.onFailedAddSubscriptionTopic("Subscription Topic is empty");
+            return false;
+        }
+        for (MqttTopic mqttTopic : mqttTopicList)
+        {
+            if (mqttTopic.getTopic().equals(topic))
+            {
+                topicExists = true;
+                break;
+            }
+        }
+        if(topicExists)
+        {
+            view.hideProgress();
+            view.onFailedAddSubscriptionTopic("Subscription already exists");
             return false;
         }
         return true;
@@ -144,10 +158,7 @@ public class MainPresenter extends BasePresenter<MainView> {
                 @Override
                 public void onSuccess(IMqttToken asyncActionToken) {
                     mqttTopicList.add(new MqttTopic(topic));
-                    Log.e("topic","New topic subscription: "+topic);
-                    Log.e("topic","Total topic subscription: "+mqttTopicList.size());
                     view.hideProgress();
-                    //view.updateSubscribedTopics(mqttTopicList);
                     view.onSuccessAddSubscriptionTopic();
                 }
 
@@ -165,7 +176,7 @@ public class MainPresenter extends BasePresenter<MainView> {
         }
     }
 
-    private boolean validateTopicMesage(String topic, String message) {
+    private boolean validateTopicMessage(String topic, String message) {
         if (topic == null || topic.trim().isEmpty()) {
             view.hideProgress();
             view.onFailedSendTopicMessage("Topic is empty");
@@ -180,7 +191,7 @@ public class MainPresenter extends BasePresenter<MainView> {
 
     public void handleSendMessageAction(final String topic, final String message)
     {
-        if (this.validateTopicMesage(topic, message))
+        if (this.validateTopicMessage(topic, message))
         {
             if (this.getClient() != null && this.getClient().isConnected()) {
                 this.sendTopicMessage(topic, message);

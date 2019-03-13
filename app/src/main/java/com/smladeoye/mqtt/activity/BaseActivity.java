@@ -2,8 +2,6 @@ package com.smladeoye.mqtt.activity;
 
 import android.support.v7.app.AppCompatActivity;
 
-import com.labters.lottiealertdialoglibrary.DialogTypes;
-import com.labters.lottiealertdialoglibrary.LottieAlertDialog;
 import com.smladeoye.mqtt.R;
 import com.smladeoye.mqtt.presenter.BasePresenter;
 import com.smladeoye.mqtt.view.BaseView;
@@ -32,7 +30,15 @@ public abstract class BaseActivity extends AppCompatActivity implements BaseView
         alertDialog = new SweetAlertDialog(this,SweetAlertDialog.PROGRESS_TYPE)
                 .setTitleText(getString(R.string.alert_loading_title))
                 .setContentText(getString(R.string.alert_loading_description));
-        //alertDialog.setCancelable(false);
+        alertDialog.show();
+    }
+
+    @Override
+    public void showProgress(String title)
+    {
+        alertDialog = new SweetAlertDialog(this,SweetAlertDialog.PROGRESS_TYPE)
+                .setTitleText(title)
+                .setContentText(getString(R.string.alert_loading_description));
         alertDialog.show();
     }
 

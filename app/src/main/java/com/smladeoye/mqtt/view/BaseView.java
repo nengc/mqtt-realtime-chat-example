@@ -2,11 +2,13 @@ package com.smladeoye.mqtt.view;
 
 public interface BaseView {
 
-    public void showProgress();
+    void showProgress();
 
-    public void hideProgress();
+    void showProgress(String title);
 
-    public void onSuccess(String message);
+    void hideProgress();
 
-    public void onFailed(String message);
+    void onSuccess(String message);
+
+    void onFailed(String message);
 }

@@ -23,4 +23,7 @@
     <string name="messages_label">Messages (messages are deletable 10 seconds after sending)</string>
     <string name="topic_message_list_status_text">Status:</string>
     <string name="send_message_success_message">Message sent successfully</string>
+    <string name="unsubscribe_success_message">Topic removed from subscription</string>
+    <string name="alert_connection_loader_title">Connecting…</string>
+    <string name="content_description_delete_icon">delete icon</string>
 </resources>
