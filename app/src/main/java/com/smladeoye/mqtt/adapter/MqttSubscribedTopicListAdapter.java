@@ -2,32 +2,21 @@ package com.smladeoye.mqtt.adapter;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Filter;
-import android.widget.Filterable;
 import android.widget.TextView;
 
 import com.smladeoye.mqtt.R;
 import com.smladeoye.mqtt.listener.ListViewOnClickListenerInterface;
-import com.smladeoye.mqtt.model.MqttMessageType;
 import com.smladeoye.mqtt.model.MqttTopic;
-import com.smladeoye.mqtt.model.MqttTopicMessage;
-
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
-import java.util.Locale;
 
 public class MqttSubscribedTopicListAdapter extends RecyclerView.Adapter<MqttSubscribedTopicListAdapter.MqttSubscribedTopicViewHolder>
 {
-    protected List<MqttTopic> mqttTopicList;
-    public ListViewOnClickListenerInterface itemClickListener;
-    public ListViewOnClickListenerInterface deleteItemClickListener;
+    private List<MqttTopic> mqttTopicList;
+    private ListViewOnClickListenerInterface itemClickListener;
+    private ListViewOnClickListenerInterface deleteItemClickListener;
 
     public void setItemClickListener(ListViewOnClickListenerInterface itemClickListener)
     {
@@ -39,18 +28,18 @@ public class MqttSubscribedTopicListAdapter extends RecyclerView.Adapter<MqttSub
         this.deleteItemClickListener = deleteItemClickListener;
     }
 
-    public class MqttSubscribedTopicViewHolder extends RecyclerView.ViewHolder
+    class MqttSubscribedTopicViewHolder extends RecyclerView.ViewHolder
     {
-        public View subscribedTopicView;
+        private View subscribedTopicView;
 
-        public TextView topicText;
-        public View topicDeleteButton;
+        TextView topicText;
+        View topicDeleteButton;
 
-        public MqttSubscribedTopicViewHolder(View itemView) {
+        MqttSubscribedTopicViewHolder(View itemView) {
             super(itemView);
-            subscribedTopicView = (View) itemView.findViewById(R.id.subscribed_topic_view);
-            topicText = (TextView) itemView.findViewById(R.id.subscribed_topic_text);
-            topicDeleteButton = (View) itemView.findViewById(R.id.subscribed_topic_delete_action);
+            subscribedTopicView = itemView.findViewById(R.id.subscribed_topic_view);
+            topicText = itemView.findViewById(R.id.subscribed_topic_text);
+            topicDeleteButton = itemView.findViewById(R.id.subscribed_topic_delete_action);
         }
     }
 
@@ -59,12 +48,12 @@ public class MqttSubscribedTopicListAdapter extends RecyclerView.Adapter<MqttSub
         this.setList(mqttTopicList);
     }
 
-    public void setList(List<MqttTopic> mqttTopicList)
+    private void setList(List<MqttTopic> mqttTopicList)
     {
         this.mqttTopicList = mqttTopicList;
     }
 
-    public List<MqttTopic> getList() {
+    private List<MqttTopic> getList() {
         return mqttTopicList;
     }
 
@@ -72,16 +61,12 @@ public class MqttSubscribedTopicListAdapter extends RecyclerView.Adapter<MqttSub
     @Override
     public MqttSubscribedTopicViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         final View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.subscribed_topic_list_row,parent,false);
-        final MqttSubscribedTopicViewHolder viewHolder = new MqttSubscribedTopicViewHolder(itemView);
-        return viewHolder;
+        return new MqttSubscribedTopicViewHolder(itemView);
     }
 
     @Override
     public void onBindViewHolder(@NonNull MqttSubscribedTopicViewHolder holder, final int position) {
         MqttTopic mqttTopic = this.getList().get(position);
-        // do view
-        DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.UK);
-
         if(deleteItemClickListener != null)
         {
             holder.topicDeleteButton.setOnClickListener(new View.OnClickListener() {

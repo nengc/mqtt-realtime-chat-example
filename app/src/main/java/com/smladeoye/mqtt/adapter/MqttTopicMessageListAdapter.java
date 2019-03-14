@@ -20,10 +20,10 @@ import java.util.Locale;
 
 public class MqttTopicMessageListAdapter extends RecyclerView.Adapter<MqttTopicMessageListAdapter.MqttTopicMessageViewHolder>
 {
-    protected List<MqttTopicMessage> mqttTopicMessageList;
-    public ListViewOnClickListenerInterface itemClickListener;
+    private List<MqttTopicMessage> mqttTopicMessageList;
+    private ListViewOnClickListenerInterface itemClickListener;
     public ListViewOnClickListenerInterface editItemClickListener;
-    public ListViewOnClickListenerInterface deleteItemClickListener;
+    private ListViewOnClickListenerInterface deleteItemClickListener;
 
     public void setItemClickListener(ListViewOnClickListenerInterface itemClickListener)
     {
@@ -35,20 +35,20 @@ public class MqttTopicMessageListAdapter extends RecyclerView.Adapter<MqttTopicM
         this.deleteItemClickListener = deleteItemClickListener;
     }
 
-    public class MqttTopicMessageViewHolder extends RecyclerView.ViewHolder{
+    class MqttTopicMessageViewHolder extends RecyclerView.ViewHolder{
 
-        public View topicMessageView;
-        public View messageDeleteButton;
-        public TextView messageTopic, messageStatus, messageDate, messageText;
+        View topicMessageView;
+        View messageDeleteButton;
+        TextView messageTopic, messageStatus, messageDate, messageText;
 
-        public MqttTopicMessageViewHolder(View itemView) {
+        MqttTopicMessageViewHolder(View itemView) {
             super(itemView);
-            topicMessageView = (View) itemView.findViewById(R.id.topic_message_view);
-            messageTopic = (TextView) itemView.findViewById(R.id.topic_text);
-            messageStatus = (TextView) itemView.findViewById(R.id.status_text);
-            messageDate = (TextView) itemView.findViewById(R.id.date_text);
-            messageText = (TextView) itemView.findViewById(R.id.message_text);
-            messageDeleteButton = (View) itemView.findViewById(R.id.message_delete_action);
+            topicMessageView = itemView.findViewById(R.id.topic_message_view);
+            messageTopic = itemView.findViewById(R.id.topic_text);
+            messageStatus = itemView.findViewById(R.id.status_text);
+            messageDate = itemView.findViewById(R.id.date_text);
+            messageText = itemView.findViewById(R.id.message_text);
+            messageDeleteButton = itemView.findViewById(R.id.message_delete_action);
         }
     }
 
@@ -57,12 +57,12 @@ public class MqttTopicMessageListAdapter extends RecyclerView.Adapter<MqttTopicM
         this.setList(mqttTopicMessageList);
     }
 
-    public void setList(List<MqttTopicMessage> mqttTopicMessageList)
+    private void setList(List<MqttTopicMessage> mqttTopicMessageList)
     {
         this.mqttTopicMessageList = mqttTopicMessageList;
     }
 
-    public List<MqttTopicMessage> getList() {
+    private List<MqttTopicMessage> getList() {
         return mqttTopicMessageList;
     }
 
@@ -70,15 +70,22 @@ public class MqttTopicMessageListAdapter extends RecyclerView.Adapter<MqttTopicM
     @Override
     public MqttTopicMessageViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         final View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.topic_message_list_row,parent,false);
-        final MqttTopicMessageViewHolder viewHolder = new MqttTopicMessageViewHolder(itemView);
-        return viewHolder;
+        return new MqttTopicMessageViewHolder(itemView);
     }
 
     @Override
     public void onBindViewHolder(@NonNull MqttTopicMessageViewHolder holder, final int position) {
         MqttTopicMessage mqttTopicMessage = this.getList().get(position);
-        // do view
-        DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss", Locale.UK);
+        if(itemClickListener != null)
+        {
+            holder.topicMessageView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    itemClickListener.onClick(view,position);
+                }
+            });
+        }
+
         if(deleteItemClickListener != null)
         {
             holder.messageDeleteButton.setOnClickListener(new View.OnClickListener() {
@@ -88,6 +95,8 @@ public class MqttTopicMessageListAdapter extends RecyclerView.Adapter<MqttTopicM
                 }
             });
         }
+
+        holder.messageDeleteButton.setVisibility(View.GONE);
         if(mqttTopicMessage.getType().equals(MqttMessageType.RECEIVED))
         {
             holder.topicMessageView.setBackgroundResource(R.drawable.received_message_background);
@@ -98,15 +107,16 @@ public class MqttTopicMessageListAdapter extends RecyclerView.Adapter<MqttTopicM
         }
         else if(mqttTopicMessage.getType().equals(MqttMessageType.WAITING))
         {
+            holder.topicMessageView.setBackgroundResource(R.drawable.waiting_message_background);
             holder.messageDeleteButton.setVisibility(View.VISIBLE);
-        }else if(mqttTopicMessage.getType().equals(MqttMessageType.DELETED))
+        }
+        else if(mqttTopicMessage.getType().equals(MqttMessageType.DELETED))
         {
-            holder.messageDeleteButton.setVisibility(View.GONE);
             holder.topicMessageView.setBackgroundResource(R.drawable.deleted_message_background);
         }
         holder.messageTopic.setText(mqttTopicMessage.getTopic());
         holder.messageStatus.setText(mqttTopicMessage.getType().toString());
-        holder.messageDate.setText(dateFormat.format(Calendar.getInstance().getTime()));
+        holder.messageDate.setText(mqttTopicMessage.getDate());
         holder.messageText.setText(new String(mqttTopicMessage.getMessage().getPayload()));
     }
 

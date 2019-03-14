@@ -25,6 +25,7 @@ import java.util.TimerTask;
 
 public class MainPresenter extends BasePresenter<MainView> {
 
+    private String BROKER_URL = "tcp://broker.hivemq.com:1883";
     private String clientId = MqttClient.generateClientId();
 
     private MqttAndroidClient client;
@@ -66,7 +67,7 @@ public class MainPresenter extends BasePresenter<MainView> {
 
     private void connect(IMqttActionListener listener) {
         view.showProgress(((Activity)view).getString(R.string.alert_connection_loader_title));
-        client = new MqttAndroidClient((Context) view, "tcp://broker.hivemq.com:1883", clientId);
+        client = new MqttAndroidClient((Context) view, BROKER_URL, clientId);
         try {
             IMqttToken token = client.connect();
             token.setActionCallback(listener);
@@ -104,7 +105,7 @@ public class MainPresenter extends BasePresenter<MainView> {
         boolean topicExists = false;
         if (topic == null || topic.trim().isEmpty()) {
             view.hideProgress();
-            view.onFailedAddSubscriptionTopic("Subscription Topic is empty");
+            view.onFailedAddSubscriptionTopic(((Activity)getView()).getString(R.string.subscription_topic_empty_message));
             return false;
         }
         for (MqttTopic mqttTopic : mqttTopicList)
@@ -118,7 +119,7 @@ public class MainPresenter extends BasePresenter<MainView> {
         if(topicExists)
         {
             view.hideProgress();
-            view.onFailedAddSubscriptionTopic("Subscription already exists");
+            view.onFailedAddSubscriptionTopic(((Activity)getView()).getString(R.string.subscription_exists_message));
             return false;
         }
         return true;
@@ -314,6 +315,19 @@ public class MainPresenter extends BasePresenter<MainView> {
 
     public void handleDeleteTopicMessageAction(int position) {
         mqttTopicMessageList.get(position).setType(MqttMessageType.DELETED);
+        view.updateTopicMessages(mqttTopicMessageList);
+    }
+
+    public void handleTopicMessageClickAction(int position) {
+        if(!mqttTopicMessageList.get(position).getType().equals(MqttMessageType.WAITING))
+        {
+            view.showTopicMessageDeleteDialog(position);
+        }
+    }
+
+    public void deleteTopicMessage(int position)
+    {
+        mqttTopicMessageList.remove(position);
         view.updateTopicMessages(mqttTopicMessageList);
     }
 }

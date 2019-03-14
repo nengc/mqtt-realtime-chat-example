@@ -26,4 +26,9 @@
     <string name="unsubscribe_success_message">Topic removed from subscription</string>
     <string name="alert_connection_loader_title">Connecting…</string>
     <string name="content_description_delete_icon">delete icon</string>
+    <string name="delete_text">delete</string>
+    <string name="confirm_delete_message">Confirm delete action</string>
+    <string name="subscribe_message">Subscribe to Topic</string>
+    <string name="subscription_exists_message">Subscription already exists</string>
+    <string name="subscription_topic_empty_message">Subscription Topic is empty</string>
 </resources>

@@ -24,8 +24,6 @@ import com.smladeoye.mqtt.model.MqttTopicMessage;
 import com.smladeoye.mqtt.presenter.BasePresenter;
 import com.smladeoye.mqtt.presenter.MainPresenter;
 import com.smladeoye.mqtt.view.MainView;
-
-import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends BaseActivity implements MainView {
@@ -112,7 +110,7 @@ public class MainActivity extends BaseActivity implements MainView {
     @Override
     public void showSubscribeDialog(final List<MqttTopic> mqttTopicList) {
         MaterialDialog dialog = new MaterialDialog.Builder(this)
-                .title("Subscribe to Topic")
+                .title(R.string.subscribe_message)
                 .customView(R.layout.add_topic_subscription, true)
                 .positiveText(R.string.subscribe_label)
                 .negativeText(android.R.string.cancel)
@@ -168,7 +166,7 @@ public class MainActivity extends BaseActivity implements MainView {
         mqttTopicMessageListAdapter.setItemClickListener(new ListViewOnClickListenerInterface() {
             @Override
             public void onClick(View view, int position) {
-
+                presenter.handleTopicMessageClickAction(position);
             }
         });
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
@@ -215,5 +213,27 @@ public class MainActivity extends BaseActivity implements MainView {
                 .adapter(mqttSubscribedTopicListAdapter, mLayoutManager)
                 .build();
         subscribedTopicsDialog.show();
+    }
+
+    @Override
+    public void showTopicMessageDeleteDialog(final int position) {
+        MaterialDialog dialog = new MaterialDialog.Builder(this)
+                .title(R.string.confirm_delete_message)
+                .content("Are you sure you want to delete this message?")
+                .positiveText(R.string.delete_text)
+                .negativeText(android.R.string.cancel)
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        presenter.deleteTopicMessage(position);
+                    }
+                })
+                .onNegative(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        dialog.dismiss();
+                    }
+                }).build();
+        dialog.show();
     }
 }

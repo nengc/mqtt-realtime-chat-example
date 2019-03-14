@@ -30,4 +30,6 @@ public interface MainView extends BaseView {
     void onFailedUnsubscribe(String message);
 
     void showSubscribedTopics(List<MqttTopic> mqttTopicList);
+
+    void showTopicMessageDeleteDialog(int position);
 }
