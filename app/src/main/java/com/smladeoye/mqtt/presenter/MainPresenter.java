@@ -25,7 +25,7 @@ import java.util.TimerTask;
 
 public class MainPresenter extends BasePresenter<MainView> {
 
-    private String BROKER_URL = "tcp://broker.hivemq.com:1883";
+    private String BROKER_URL = "tcp://192.168.1.244:1883";
     private String clientId = MqttClient.generateClientId();
 
     private MqttAndroidClient client;
